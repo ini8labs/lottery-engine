@@ -18,7 +18,7 @@ func NewServer(server Server) error {
 
 	// API end point
 	r.GET("/api/v1/eventinfo/Winners", server.GetEventWinners)
-	r.POST("api/v1/event/AddWinner", server.addNewWinner)
+	r.POST("api/v1/event/addWinner", server.addNewWinner)
 
 	return r.Run(server.Addr)
 }
