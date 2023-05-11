@@ -156,20 +156,46 @@ func (s Server) generateWinners(c *gin.Context) {
 }
 
 func (s Server) getEventWinners(c *gin.Context) {
-	eventid := c.Query("eventId")
+	eventId := c.Query("eventId")
 
-	valid := s.validateEventId(eventid)
+	valid := s.validateEventId(eventId)
 	if !valid {
 		c.JSON(http.StatusBadRequest, "EventId does not exist")
 		s.Logger.Error("invalid event id")
 		return
 	}
 
-	resp, err := s.Client.GetEventWinners(stringToPrimitive(eventid))
+	resp, err := s.Client.GetEventWinners(stringToPrimitive(eventId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "something is wrong with the server")
 		s.Logger.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, resp)
+
+	resp1, err := s.Client.GetParticipantsInfoByEventID(stringToPrimitive(eventId))
+	if err != nil {
+		s.Logger.Error(err)
+		return
+	}
+	winnerInfoArr := initializeWinnersInfo(resp, resp1)
+	c.JSON(http.StatusOK, winnerInfoArr)
+}
+
+func initializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantInfo []lsdb.EventParticipantInfo) []Winners {
+	var winnerInfoArr []Winners
+
+	for i := 0; i < len(eventWinnerInfo); i++ {
+		for j := 0; j < len(eventParticipantInfo); j++ {
+			winnerInfo := Winners{
+				EventUID:  primitiveToString(eventWinnerInfo[i].EventID),
+				UserID:    primitiveToString(eventWinnerInfo[i].UserID),
+				AmountWon: eventWinnerInfo[i].AmountWon,
+				WinType:   eventWinnerInfo[i].WinType,
+				BetID:     primitiveToString(eventParticipantInfo[j].BetUID),
+			}
+			winnerInfoArr = append(winnerInfoArr, winnerInfo)
+		}
+
+	}
+	return winnerInfoArr
 }
