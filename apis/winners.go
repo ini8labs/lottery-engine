@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,13 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s Server) validateEventId(str string) (bool, error) {
-	eventIdExist := true
+func (s Server) validateEventId(str string) bool {
+	var eventIdExist bool
 
 	resp, err := s.GetAllEvents()
 	if err != nil {
 		s.Logger.Error(err.Error())
-		return false, err
+		return false
 	}
 
 	for i := 0; i < len(resp); i++ {
@@ -24,9 +25,10 @@ func (s Server) validateEventId(str string) (bool, error) {
 		}
 		if resp[i].EventUID != stringToPrimitive(str) {
 			eventIdExist = false
+
 		}
 	}
-	return eventIdExist, nil
+	return eventIdExist
 }
 
 func winnerDecider(betNumbers []int, winNumbers []int, amount int) (string, int) {
@@ -39,6 +41,7 @@ func winnerDecider(betNumbers []int, winNumbers []int, amount int) (string, int)
 			}
 		}
 	}
+	fmt.Println(count, "[[[[[[[[[]]]]]]]]]")
 
 	amountWon := 0
 	winType := ""
@@ -79,6 +82,9 @@ func winnerDecider(betNumbers []int, winNumbers []int, amount int) (string, int)
 		amountWon = amount*44000 - amount
 		winType = "Perm-5"
 	}
+	fmt.Println(winType, "___________")
+	fmt.Println(amountWon, "==========")
+
 	return winType, amountWon
 }
 
@@ -86,29 +92,30 @@ func (s Server) winnerSelector(eventId primitive.ObjectID) ([]lsdb.WinnerInfo, e
 
 	resp, err := s.Client.GetParticipantsInfoByEventID(eventId)
 	if err != nil {
-		s.Logger.Error(err.Error())
+		s.Logger.Error(err)
 		return []lsdb.WinnerInfo{}, err
 	}
 
-	resp1, err := s.Client.GetEventInfoByEventId(eventId)
+	// resp1, err := s.Client.GetEventInfoByEventId(eventId)
 
-	if err != nil {
-		return []lsdb.WinnerInfo{}, err
-	}
-	arr := initializeEventWinnerInfo(resp, resp1)
+	// if err != nil {
+	// 	return []lsdb.WinnerInfo{}, err
+	// }
+	arr := initializeEventWinnerInfo(resp)
 
 	return arr, nil
 }
 
-func initializeEventWinnerInfo(resp []lsdb.EventParticipantInfo, resp1 []lsdb.LotteryEventInfo) []lsdb.WinnerInfo {
-	winNumbers := resp1.WinningNumber
+func initializeEventWinnerInfo(resp []lsdb.EventParticipantInfo) []lsdb.WinnerInfo {
+	var winNumbers = []int{1, 2, 3, 4, 5}
 	var arr []lsdb.WinnerInfo
 
 	for i := 0; i < len(resp); i++ {
 		betNumbers := resp[i].BetNumbers
 
 		winType, amountWon := winnerDecider(betNumbers, winNumbers, resp[i].Amount)
-
+		fmt.Println(winType, "{{{{{}}}}}")
+		fmt.Println(amountWon, ")))))")
 		winnerInfo := lsdb.WinnerInfo{
 			EventID:   resp[i].EventUID,
 			UserID:    resp[i].UserID,
@@ -116,41 +123,42 @@ func initializeEventWinnerInfo(resp []lsdb.EventParticipantInfo, resp1 []lsdb.Lo
 			AmountWon: amountWon,
 		}
 		arr = append(arr, winnerInfo)
+
 	}
 	return arr
 }
 
 func (s Server) addNewWinner(c *gin.Context) {
-	eventId := c.Param("eventId")
+	eventId := c.Query("eventId")
 
-	validation, _ := s.validateEventId(eventId)
+	validation := s.validateEventId(eventId)
 	if !validation {
 		c.JSON(http.StatusBadRequest, "EventId does not exist")
-		s.Logger.Error("invalid event id")
+		s.Logger.Error("event id does not exist")
 		return
 	}
 
 	resp, err := s.winnerSelector(stringToPrimitive(eventId))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
-		s.Logger.Error(err.Error())
+		s.Logger.Error(err)
 		return
 	}
 
 	for i := 0; i < len(resp); i++ {
 		if err := s.AddNewWinner(resp[i]); err != nil {
 			c.JSON(http.StatusInternalServerError, "something is wrong with the server")
-			s.Logger.Error(err.Error())
+			s.Logger.Error(err)
 			return
 		}
 	}
-	c.JSON(http.StatusCreated, "Winner added successfully")
+	c.JSON(http.StatusCreated, "Winners added successfully")
 }
 
-func (s Server) GetEventWinners(c *gin.Context) {
-	eventid := c.Query("eventid")
+func (s Server) getEventWinners(c *gin.Context) {
+	eventid := c.Query("eventId")
 
-	validation, _ := s.validateEventId(eventid)
+	validation := s.validateEventId(eventid)
 	if !validation {
 		c.JSON(http.StatusBadRequest, "EventId does not exist")
 		s.Logger.Error("invalid event id")
@@ -160,7 +168,7 @@ func (s Server) GetEventWinners(c *gin.Context) {
 	resp, err := s.Client.GetEventWinners(stringToPrimitive(eventid))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "something is wrong with the server")
-		s.Logger.Error(err.Error())
+		s.Logger.Error(err)
 		return
 	}
 	c.JSON(http.StatusOK, resp)

@@ -5,7 +5,7 @@ package docs
 import "github.com/swaggo/swag"
 
 const docTemplate = `{
-    "schemes": {{ marshal .Schemes }},
+    "schemes": ["http"],
     "swagger": "2.0",
     "info": {
         "description": "{{escape .Description}}",
@@ -15,21 +15,68 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+                "/winners":{
+                    "post":{
+                        "summary": "Add event winner",
+                        "tags": ["Winners"],
+                        "consumes":["application/json"],
+                        "produces":["application/jsoon"],
+                        "parameters": [
+                            {
+                                "name":"eventId",
+                                "in":"query",
+                                "type": "string",
+                                "required": true
+                            }
+                        ],
+                        "responses": {
+                            "201":{
+                                "description": "ok",
+                                "schema":{
+                                    "type":"string",
+                                    "example":"winners info added successfully"
+                                }
+                            }
+                        }
+                    },
+                    "get": {
+                        "summary":"Get Event Winners by event Id",
+                        "tags": ["Winners"],
+                        "consumes":["application/json"],
+                        "produces":["application/jsoon"],
+                        "parameters": [
+                            {
+                                "description": "Enter Event Id",
+                                "name": "eventId",
+                                "in": "query",
+                                "type":"string",
+                                "required": true
+                            }
+                        ],
+                        "responses": {
+                            "200":{
+                                "description": "Status OK",
+                                "schema":{
+                                    "type":"array"
+                                }
+                            }
+                        }
+                    }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Version:          "2.0",
+	Host:             "localhost:3000",
+	BasePath:         "/api/v1",
+	Schemes:          []string{"http"},
+	Title:            "My API",
+	Description:      "This is Lottery Project API",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
-	LeftDelim:        "{{",
-	RightDelim:       "}}",
 }
 
 func init() {
