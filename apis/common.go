@@ -14,7 +14,7 @@ func primitiveToString(p primitive.ObjectID) string {
 }
 
 func stringToPrimitive(s string) primitive.ObjectID {
-	var a, _ = primitive.ObjectIDFromHex(s)
+	a, _ := primitive.ObjectIDFromHex(s)
 	return a
 }
 

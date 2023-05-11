@@ -1,11 +1,11 @@
 package apis
 
 import (
-	"lottery-engine/docs"
-
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	"lottery-engine/docs"
 )
 
 func NewServer(server Server) error {
@@ -18,7 +18,7 @@ func NewServer(server Server) error {
 
 	// API end point
 	r.GET("/api/v1/winners", server.getEventWinners)
-	r.POST("api/v1/winners", server.addNewWinner)
+	r.POST("api/v1/winners", server.generateWinners)
 
 	return r.Run(server.Addr)
 }

@@ -1,8 +1,9 @@
 package apis
 
 import (
-	"github.com/ini8labs/lsdb"
 	"github.com/sirupsen/logrus"
+
+	"github.com/ini8labs/lsdb"
 )
 
 type Server struct {
