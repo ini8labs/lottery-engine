@@ -17,8 +17,8 @@ func NewServer(server Server) error {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	// API end point
-	r.GET("/api/v1/eventinfo/Winners", server.GetEventWinners)
-	r.POST("api/v1/event/addWinner", server.addNewWinner)
+	r.GET("/api/v1/winners", server.getEventWinners)
+	r.POST("api/v1/winners", server.addNewWinner)
 
 	return r.Run(server.Addr)
 }
