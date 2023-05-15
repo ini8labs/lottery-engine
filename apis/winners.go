@@ -17,11 +17,8 @@ func (s Server) validateEventId(eventId string) bool {
 		s.Logger.Error(err.Error())
 		return false
 	}
-	fmt.Println(resp)
-	fmt.Println("@@@@@@@@@@")
 
 	return eventIDExist(eventId, resp)
-
 }
 
 func eventIDExist(eventID string, eventIDArray []lsdb.LotteryEventInfo) bool {
@@ -206,5 +203,11 @@ func initializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantIn
 			winnerInfoArr = append(winnerInfoArr, winnerInfo)
 		}
 	}
+	fmt.Println(eventWinnerInfo)
+	fmt.Println("!!!!!!!!!!")
+	fmt.Println(eventParticipantInfo)
+	fmt.Println("@@@@@@@@@")
+	fmt.Println(winnerInfoArr)
+	fmt.Println("############")
 	return winnerInfoArr
 }

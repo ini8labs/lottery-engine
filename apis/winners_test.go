@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/ini8labs/lsdb"
@@ -77,11 +78,38 @@ func Test_eventIDExist(t *testing.T) {
 		want bool
 	}{
 		{"valid input", args{"6452183b3aa8ab565e89897b", []lsdb.LotteryEventInfo{{EventUID: stringToPrimitive("6452183b3aa8ab565e89897b"), EventDate: 1683244800000, Name: "Friday Bonanza", EventType: "FB", WinningNumber: []int{67, 23, 65, 22, 11}, CreatedAt: 1683101755340, UpdatedAt: 1683101755340}}}, true},
+		{"invalid input", args{"6452183b3aa8ab565e89897b", []lsdb.LotteryEventInfo{}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := eventIDExist(tt.args.eventID, tt.args.eventIDArray); got != tt.want {
 				t.Errorf("eventIDExist() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_initializeWinnersInfo(t *testing.T) {
+	type args struct {
+		eventWinnerInfo      []lsdb.WinnerInfo
+		eventParticipantInfo []lsdb.EventParticipantInfo
+	}
+	tests := []struct {
+		name string
+		args args
+		want []Winners
+	}{
+		{
+			"valid input",
+			args{[]lsdb.WinnerInfo{{EventID: stringToPrimitive("6452183b3aa8ab565e89897b"), UserID: stringToPrimitive("644790a68e3540cbb44180b0"), WinType: "Perm-2", AmountWon: 1314500, CreatedAt: 1683802437767}, {EventID: stringToPrimitive("6452183b3aa8ab565e89897b"), UserID: stringToPrimitive("644790a68e3540cbb44180b0"), WinType: "Direct-3", AmountWon: 11544500, CreatedAt: 1683809942653}},
+				[]lsdb.EventParticipantInfo{{BetUID: stringToPrimitive("64529784e5b433802324b3f7"), EventUID: stringToPrimitive("6452183b3aa8ab565e89897b"), ParticipantInfo: lsdb.ParticipantInfo{UserID: stringToPrimitive("644790a68e3540cbb44180b0"), BetNumbers: []int{2, 22, 62}, Amount: 5500}, CreatedAt: 1683134340492, UpdatedAt: 1683134340492}}},
+			[]Winners{{UserID: "644790a68e3540cbb44180b0", EventUID: "6452183b3aa8ab565e89897b", AmountWon: 1314500, WinType: "Perm-2", BetID: "64529784e5b433802324b3f7"}, {UserID: "644790a68e3540cbb44180b0", EventUID: "6452183b3aa8ab565e89897b", AmountWon: 11544500, WinType: "Direct-3", BetID: "64529784e5b433802324b3f7"}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := initializeWinnersInfo(tt.args.eventWinnerInfo, tt.args.eventParticipantInfo); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("initializeWinnersInfo() = %v, want %v", got, tt.want)
 			}
 		})
 	}
