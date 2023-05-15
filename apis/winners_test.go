@@ -1,33 +1,10 @@
 package apis
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/ini8labs/lsdb"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-// func TestServer_validateEventId(t *testing.T) {
-// 	type args struct {
-// 		event_Id string
-// 	}
-// 	tests := []struct {
-// 		name string
-// 		s    Server
-// 		args args
-// 		want bool
-// 	}{
-// 		{"Valid input", Server{&logrus.Logger{}, &lsdb.Client{}, ""}, args{"6452183b3aa8ab565e89897b"}, true},
-// 	}
-// 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
-// 			if got := tt.s.validateEventId(tt.args.event_Id); got != tt.want {
-// 				t.Errorf("Server.validateEventId() = %v, want %v", got, tt.want)
-// 			}
-// 		})
-// 	}
-// }
 
 func Test_countMatchNumber(t *testing.T) {
 	type args struct {
@@ -89,28 +66,22 @@ func Test_winnerDecider(t *testing.T) {
 	}
 }
 
-func TestServer_winnerSelector(t *testing.T) {
+func Test_eventIDExist(t *testing.T) {
 	type args struct {
-		eventId primitive.ObjectID
+		eventID      string
+		eventIDArray []lsdb.LotteryEventInfo
 	}
 	tests := []struct {
-		name    string
-		s       Server
-		args    args
-		want    []lsdb.WinnerInfo
-		wantErr bool
+		name string
+		args args
+		want bool
 	}{
-		// TODO: Add test cases.
+		{"valid input", args{"6452183b3aa8ab565e89897b", []lsdb.LotteryEventInfo{{EventUID: stringToPrimitive("6452183b3aa8ab565e89897b"), EventDate: 1683244800000, Name: "Friday Bonanza", EventType: "FB", WinningNumber: []int{67, 23, 65, 22, 11}, CreatedAt: 1683101755340, UpdatedAt: 1683101755340}}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tt.s.winnerSelector(tt.args.eventId)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Server.winnerSelector() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Server.winnerSelector() = %v, want %v", got, tt.want)
+			if got := eventIDExist(tt.args.eventID, tt.args.eventIDArray); got != tt.want {
+				t.Errorf("eventIDExist() = %v, want %v", got, tt.want)
 			}
 		})
 	}

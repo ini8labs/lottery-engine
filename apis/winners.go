@@ -10,19 +10,29 @@ import (
 	"github.com/ini8labs/lsdb"
 )
 
-func (s Server) validateEventId(event_Id string) bool {
+func (s Server) validateEventId(eventId string) bool {
 
 	resp, err := s.GetAllEvents()
 	if err != nil {
 		s.Logger.Error(err.Error())
 		return false
 	}
-	eventId := stringToPrimitive(event_Id)
-	for i := 0; i < len(resp); i++ {
-		if resp[i].EventUID == eventId {
+	fmt.Println(resp)
+	fmt.Println("@@@@@@@@@@")
+
+	return eventIDExist(eventId, resp)
+
+}
+
+func eventIDExist(eventID string, eventIDArray []lsdb.LotteryEventInfo) bool {
+	eventIdPrimitive := stringToPrimitive(eventID)
+
+	for i := 0; i < len(eventIDArray); i++ {
+		if eventIDArray[i].EventUID == eventIdPrimitive {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -108,7 +118,7 @@ func (s Server) winnerSelector(eventId primitive.ObjectID) ([]lsdb.WinnerInfo, e
 }
 
 func initializeEventWinnerInfo(eventParticipantInfoArr []lsdb.EventParticipantInfo) []lsdb.WinnerInfo {
-	var winNumbers = []int{1, 2, 3, 4, 22}
+	var winNumbers = []int{2, 22, 62}
 	var winnerInfoArr []lsdb.WinnerInfo
 
 	for i := 0; i < len(eventParticipantInfoArr); i++ {
@@ -195,7 +205,6 @@ func initializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantIn
 			}
 			winnerInfoArr = append(winnerInfoArr, winnerInfo)
 		}
-
 	}
 	return winnerInfoArr
 }
