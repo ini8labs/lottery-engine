@@ -114,24 +114,24 @@ func (s Server) winnerSelector(eventId primitive.ObjectID) ([]lsdb.WinnerInfo, e
 	return eventWinnersInfoArr, nil
 }
 
-func initializeEventWinnerInfo(eventParticipantInfoArr []lsdb.EventParticipantInfo) []lsdb.WinnerInfo {
+func initializeEventWinnerInfo(eventParticipantInfoArray []lsdb.EventParticipantInfo) []lsdb.WinnerInfo {
 	var winNumbers = []int{2, 22, 62}
 	var winnerInfoArr []lsdb.WinnerInfo
 
-	for i := 0; i < len(eventParticipantInfoArr); i++ {
-		betNumbers := eventParticipantInfoArr[i].BetNumbers
+	for i := 0; i < len(eventParticipantInfoArray); i++ {
+		betNumbers := eventParticipantInfoArray[i].BetNumbers
 
-		winType, amountWon := winnerDecider(betNumbers, winNumbers, eventParticipantInfoArr[i].Amount)
+		winType, amountWon := winnerDecider(betNumbers, winNumbers, eventParticipantInfoArray[i].Amount)
 		winnerInfo := lsdb.WinnerInfo{
-			EventID:   eventParticipantInfoArr[i].EventUID,
-			UserID:    eventParticipantInfoArr[i].UserID,
+			EventID:   eventParticipantInfoArray[i].EventUID,
+			UserID:    eventParticipantInfoArray[i].UserID,
 			WinType:   winType,
 			AmountWon: amountWon,
 		}
 		winnerInfoArr = append(winnerInfoArr, winnerInfo)
-		fmt.Println(winnerInfoArr)
 
 	}
+	fmt.Println(eventParticipantInfoArray)
 	return winnerInfoArr
 }
 
@@ -172,14 +172,14 @@ func (s Server) getEventWinners(c *gin.Context) {
 		return
 	}
 
-	resp, err := s.Client.GetEventWinners(stringToPrimitive(eventId))
+	resp, err := s.GetEventWinners(stringToPrimitive(eventId))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "something is wrong with the server")
 		s.Logger.Error(err)
 		return
 	}
 
-	resp1, err := s.Client.GetParticipantsInfoByEventID(stringToPrimitive(eventId))
+	resp1, err := s.GetParticipantsInfoByEventID(stringToPrimitive(eventId))
 	if err != nil {
 		s.Logger.Error(err)
 		return
@@ -203,11 +203,6 @@ func initializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantIn
 			winnerInfoArr = append(winnerInfoArr, winnerInfo)
 		}
 	}
-	fmt.Println(eventWinnerInfo)
-	fmt.Println("!!!!!!!!!!")
-	fmt.Println(eventParticipantInfo)
-	fmt.Println("@@@@@@@@@")
-	fmt.Println(winnerInfoArr)
-	fmt.Println("############")
+
 	return winnerInfoArr
 }

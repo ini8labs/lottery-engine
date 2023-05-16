@@ -114,3 +114,27 @@ func Test_initializeWinnersInfo(t *testing.T) {
 		})
 	}
 }
+
+func Test_initializeEventWinnerInfo(t *testing.T) {
+	type args struct {
+		eventParticipantInfoArr []lsdb.EventParticipantInfo
+	}
+	tests := []struct {
+		name string
+		args args
+		want []lsdb.WinnerInfo
+	}{
+		{
+			"valid input",
+			args{[]lsdb.EventParticipantInfo{{BetUID: stringToPrimitive("64529784e5b433802324b3f7"), EventUID: stringToPrimitive("6452183b3aa8ab565e89897b"), ParticipantInfo: lsdb.ParticipantInfo{UserID: stringToPrimitive("644790a68e3540cbb44180b0"), BetNumbers: []int{2, 22, 62}, Amount: 5500}, CreatedAt: 1683134340492, UpdatedAt: 1683134340492}}},
+			[]lsdb.WinnerInfo{{EventID: stringToPrimitive("6452183b3aa8ab565e89897b"), UserID: stringToPrimitive("644790a68e3540cbb44180b0"), WinType: "Direct-3", AmountWon: 11544500, CreatedAt: 0}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := initializeEventWinnerInfo(tt.args.eventParticipantInfoArr); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("initializeEventWinnerInfo() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
