@@ -5,7 +5,7 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"lottery-engine/docs"
+	"github.com/lottery-engine/docs"
 )
 
 func NewServer(server Server) error {

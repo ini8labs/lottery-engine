@@ -1,4 +1,4 @@
-module lottery-engine
+module github.com/lottery-engine
 
 go 1.20
 

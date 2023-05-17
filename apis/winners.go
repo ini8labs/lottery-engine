@@ -115,7 +115,7 @@ func (s Server) winnerSelector(eventId primitive.ObjectID) ([]lsdb.WinnerInfo, e
 }
 
 func initializeEventWinnerInfo(eventParticipantInfoArray []lsdb.EventParticipantInfo) []lsdb.WinnerInfo {
-	var winNumbers = []int{2, 22, 62}
+	var winNumbers = []int{81, 30, 3}
 	var winnerInfoArr []lsdb.WinnerInfo
 
 	for i := 0; i < len(eventParticipantInfoArray); i++ {
@@ -184,6 +184,7 @@ func (s Server) getEventWinners(c *gin.Context) {
 		s.Logger.Error(err)
 		return
 	}
+
 	winnerInfoArr := initializeWinnersInfo(resp, resp1)
 	c.JSON(http.StatusOK, winnerInfoArr)
 }

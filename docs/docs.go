@@ -73,8 +73,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:3000",
 	BasePath:         "/api/v1",
 	Schemes:          []string{"http"},
-	Title:            "My API",
-	Description:      "This is Lottery Project API",
+	Title:            "Lottery Generator API's",
+	Description:      "Lottery Project",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
