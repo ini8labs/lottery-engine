@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -115,7 +114,7 @@ func (s Server) winnerSelector(eventId primitive.ObjectID) ([]lsdb.WinnerInfo, e
 }
 
 func initializeEventWinnerInfo(eventParticipantInfoArray []lsdb.EventParticipantInfo) []lsdb.WinnerInfo {
-	var winNumbers = []int{81, 30, 3}
+	var winNumbers = []int{12, 29, 62, 55, 89}
 	var winnerInfoArr []lsdb.WinnerInfo
 
 	for i := 0; i < len(eventParticipantInfoArray); i++ {
@@ -131,12 +130,12 @@ func initializeEventWinnerInfo(eventParticipantInfoArray []lsdb.EventParticipant
 		winnerInfoArr = append(winnerInfoArr, winnerInfo)
 
 	}
-	fmt.Println(eventParticipantInfoArray)
 	return winnerInfoArr
 }
 
 func (s Server) generateWinners(c *gin.Context) {
 	eventId := c.Query("eventId")
+	eventid := stringToPrimitive(eventId)
 
 	valid := s.validateEventId(eventId)
 	if !valid {
@@ -145,7 +144,20 @@ func (s Server) generateWinners(c *gin.Context) {
 		return
 	}
 
-	resp, err := s.winnerSelector(stringToPrimitive(eventId))
+	resp1, err := s.GetEventWinners(eventid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "something is wrong with the server")
+		s.Logger.Error(err)
+		return
+	}
+
+	if resp1 != nil {
+		c.JSON(http.StatusConflict, "winners for this event are already added")
+		s.Logger.Error("winners for this event are already added")
+		return
+	}
+
+	resp, err := s.winnerSelector(eventid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		s.Logger.Error(err)
@@ -159,6 +171,7 @@ func (s Server) generateWinners(c *gin.Context) {
 			return
 		}
 	}
+
 	c.JSON(http.StatusCreated, "Winners added successfully")
 }
 
@@ -184,7 +197,6 @@ func (s Server) getEventWinners(c *gin.Context) {
 		s.Logger.Error(err)
 		return
 	}
-
 	winnerInfoArr := initializeWinnersInfo(resp, resp1)
 	c.JSON(http.StatusOK, winnerInfoArr)
 }

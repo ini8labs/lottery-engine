@@ -36,6 +36,13 @@ const docTemplate = `{
                                 "schema":{
                                     "type":"string",
                                     "example":"winners info added successfully"
+                                },
+                            "404":{
+                                "description":"Method not allowed",
+                                "schema":{
+                                    "type":"string",
+                                    "example":"invalid input"
+                                    }
                                 }
                             }
                         }
