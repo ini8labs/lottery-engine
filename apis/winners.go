@@ -164,8 +164,16 @@ func (s Server) generateWinners(c *gin.Context) {
 		return
 	}
 
+	var winnerArr []lsdb.WinnerInfo
+
 	for i := 0; i < len(resp); i++ {
-		if err := s.AddNewWinner(resp[i]); err != nil {
+		if resp[i].AmountWon != 0 || resp[i].WinType != "" {
+			winnerArr = append(winnerArr, resp[i])
+		}
+	}
+
+	for i := 0; i < len(winnerArr); i++ {
+		if err := s.AddNewWinner(winnerArr[i]); err != nil {
 			c.JSON(http.StatusInternalServerError, "something is wrong with the server")
 			s.Logger.Error(err)
 			return
@@ -205,17 +213,17 @@ func initializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantIn
 	var winnerInfoArr []Winners
 
 	for i := 0; i < len(eventWinnerInfo); i++ {
-		for j := 0; j < len(eventParticipantInfo); j++ {
-			winnerInfo := Winners{
-				EventUID:  primitiveToString(eventWinnerInfo[i].EventID),
-				UserID:    primitiveToString(eventWinnerInfo[i].UserID),
-				AmountWon: eventWinnerInfo[i].AmountWon,
-				WinType:   eventWinnerInfo[i].WinType,
-				BetID:     primitiveToString(eventParticipantInfo[j].BetUID),
-			}
-			winnerInfoArr = append(winnerInfoArr, winnerInfo)
+		winnerInfo := Winners{
+			EventUID:  primitiveToString(eventWinnerInfo[i].EventID),
+			UserID:    primitiveToString(eventWinnerInfo[i].UserID),
+			AmountWon: eventWinnerInfo[i].AmountWon,
+			WinType:   eventWinnerInfo[i].WinType,
+			//BetID:     primitiveToString(eventParticipantInfo[j].BetUID),
 		}
+		winnerInfoArr = append(winnerInfoArr, winnerInfo)
 	}
-
+	// fmt.Println(eventWinnerInfo)
+	// fmt.Println("!!!!!!!!!!!!!!")
+	// fmt.Println(eventParticipantInfo)
 	return winnerInfoArr
 }

@@ -16,7 +16,11 @@ func Test_stringToPrimitive(t *testing.T) {
 		args args
 		want primitive.ObjectID
 	}{
-		{"valid input", args{"645cc94575799d46e3352e0b"}, stringToPrimitive("645cc94575799d46e3352e0b")},
+		{
+			"valid input",
+			args{"645cc94575799d46e3352e0b"},
+			stringToPrimitive("645cc94575799d46e3352e0b"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
