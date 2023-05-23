@@ -22,7 +22,5 @@ type Winners struct {
 	UserID    string `json:"user_id"`
 	EventUID  string `json:"event_id"`
 	AmountWon int    `json:"amountWon"`
-	//EventDate Date   `json:"event_date"`
-	WinType string `json:"winType"`
-	BetID   string `json:"bet_id"`
+	WinType   string `json:"winType"`
 }

@@ -218,12 +218,9 @@ func initializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantIn
 			UserID:    primitiveToString(eventWinnerInfo[i].UserID),
 			AmountWon: eventWinnerInfo[i].AmountWon,
 			WinType:   eventWinnerInfo[i].WinType,
-			//BetID:     primitiveToString(eventParticipantInfo[j].BetUID),
 		}
 		winnerInfoArr = append(winnerInfoArr, winnerInfo)
 	}
-	// fmt.Println(eventWinnerInfo)
-	// fmt.Println("!!!!!!!!!!!!!!")
-	// fmt.Println(eventParticipantInfo)
+
 	return winnerInfoArr
 }
