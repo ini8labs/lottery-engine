@@ -1,0 +1,56 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/winners":{
+            "post":{
+                "summary": "Add event winner",
+                "tags": ["Winners"],
+                "consumes":["application/json"],
+                "produces":["application/jsoon"],
+                "parameters": [
+                    {
+                        "name":"eventId",
+                        "in":"query",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201":{
+                        "description": "ok",
+                        "schema":{
+                            "type":"string",
+                            "example":"winners info added successfully"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "summary":"Get Event Winners by event Id",
+                "tags": ["Winners"],
+                "consumes":["application/json"],
+                "produces":["application/jsoon"],
+                "parameters": [
+                    {
+                        "description": "Enter Event Id",
+                        "name": "eventId",
+                        "in": "query",
+                        "type":"string",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "Status OK",
+                        "schema":{
+                            "type":"array"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
