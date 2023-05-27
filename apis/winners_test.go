@@ -171,7 +171,7 @@ func Test_initializeWinnersInfo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := initializeWinnersInfo(tt.args.eventWinnerInfo, tt.args.eventParticipantInfo); !reflect.DeepEqual(got, tt.want) {
+			if got := InitializeWinnersInfo(tt.args.eventWinnerInfo, tt.args.eventParticipantInfo); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("initializeWinnersInfo() = %v, want %v", got, tt.want)
 			}
 		})

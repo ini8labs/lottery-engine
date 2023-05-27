@@ -205,11 +205,11 @@ func (s Server) getEventWinners(c *gin.Context) {
 		s.Logger.Error(err)
 		return
 	}
-	winnerInfoArr := initializeWinnersInfo(resp, resp1)
+	winnerInfoArr := InitializeWinnersInfo(resp, resp1)
 	c.JSON(http.StatusOK, winnerInfoArr)
 }
 
-func initializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantInfo []lsdb.EventParticipantInfo) []Winners {
+func InitializeWinnersInfo(eventWinnerInfo []lsdb.WinnerInfo, eventParticipantInfo []lsdb.EventParticipantInfo) []Winners {
 	var winnerInfoArr []Winners
 
 	for i := 0; i < len(eventWinnerInfo); i++ {
